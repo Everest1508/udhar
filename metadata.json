@@ -1,0 +1,6 @@
+{
+  "name": "Udhar Book",
+  "description": "A simple offline-first ledger for managing personal credits and debts, designed for easy use.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
