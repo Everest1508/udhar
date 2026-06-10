@@ -20,6 +20,7 @@ export default function AddPersonModal({ isOpen, onClose, onSave, lang }: AddPer
   const [phone, setPhone] = useState('');
   const [isContactSupported, setIsContactSupported] = useState(false);
   const [error, setError] = useState('');
+  const [showGuide, setShowGuide] = useState(false);
 
   useEffect(() => {
     // Check if Contact Picker API is available in browser
@@ -30,6 +31,13 @@ export default function AddPersonModal({ isOpen, onClose, onSave, lang }: AddPer
 
   const handleImportContact = async () => {
     setError('');
+    
+    if (!isContactSupported) {
+      // Toggle native support visual instructions
+      setShowGuide(!showGuide);
+      return;
+    }
+
     try {
       const props = ['name', 'tel'];
       const opts = { multiple: false };
@@ -57,6 +65,12 @@ export default function AddPersonModal({ isOpen, onClose, onSave, lang }: AddPer
     }
   };
 
+  const selectSampleContact = (sampleName: string, samplePhone: string) => {
+    setName(sampleName);
+    setPhone(samplePhone);
+    setShowGuide(false);
+  };
+
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
@@ -67,6 +81,7 @@ export default function AddPersonModal({ isOpen, onClose, onSave, lang }: AddPer
     setName('');
     setPhone('');
     setError('');
+    setShowGuide(false);
   };
 
   if (!isOpen) return null;
@@ -100,16 +115,63 @@ export default function AddPersonModal({ isOpen, onClose, onSave, lang }: AddPer
             </div>
           )}
 
-          {isContactSupported && (
+          {/* Always display Contact picker button! */}
+          <div className="space-y-2">
             <button
               type="button"
               onClick={handleImportContact}
-              className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-indigo-200 bg-indigo-50/50 py-3.5 text-sm font-medium text-indigo-700 hover:bg-indigo-50 transition-colors"
+              className={`flex w-full items-center justify-center gap-2 rounded-xl border border-dashed py-3 text-sm font-semibold transition-all ${
+                isContactSupported 
+                  ? 'border-indigo-300 bg-indigo-50/50 text-indigo-700 hover:bg-indigo-50' 
+                  : 'border-amber-300 bg-amber-50/45 text-amber-800 hover:bg-amber-50'
+              }`}
             >
-              <Sparkles size={16} />
+              <Sparkles size={16} className={isContactSupported ? 'text-indigo-600' : 'text-amber-600'} />
               <span>{getTranslation('importContact', lang)}</span>
             </button>
-          )}
+
+            {/* Informational help panel if browser does not natively expose contacts inside preview frame */}
+            {showGuide && (
+              <div className="rounded-xl border border-amber-100 bg-amber-50/40 p-4 text-xs text-amber-900 space-y-2.5 shadow-inner">
+                <p className="font-bold text-amber-950 flex items-center gap-1">
+                  💡 {getTranslation('contactsGuideTitle', lang)}
+                </p>
+                <p className="leading-relaxed text-amber-900 font-normal">
+                  {getTranslation('contactsGuideDesc', lang)}
+                </p>
+                
+                {/* Try Sample contacts option for rich testing experience */}
+                <div className="pt-2 border-t border-amber-150 space-y-1">
+                  <p className="font-semibold text-amber-950 text-[10px] tracking-wider uppercase mb-1">
+                    {lang === 'marathi' ? 'येथे चाचणीसाठी संपर्क निवडा:' : 'Or tap a sample to test importing:'}
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => selectSampleContact(lang === 'marathi' ? 'सीमा मावशी' : 'Sima Mavshi', '9876543210')}
+                      className="rounded-lg bg-white border border-amber-200/80 px-2.5 py-1.5 hover:bg-amber-50/80 text-amber-950 font-medium whitespace-nowrap active:scale-95 transition"
+                    >
+                      👤 {lang === 'marathi' ? 'सीमा मावशी' : 'Sima Mavshi'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => selectSampleContact(lang === 'marathi' ? 'संतोष किराणा' : 'Santosh Kirana', '9123456780')}
+                      className="rounded-lg bg-white border border-amber-200/80 px-2.5 py-1.5 hover:bg-amber-50/80 text-amber-950 font-medium whitespace-nowrap active:scale-95 transition"
+                    >
+                      🛒 {lang === 'marathi' ? 'संतोष किराणा' : 'Santosh Kirana'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => selectSampleContact(lang === 'marathi' ? 'दूधवाले दादा' : 'Milkman', '9004003002')}
+                      className="rounded-lg bg-white border border-amber-200/80 px-2.5 py-1.5 hover:bg-amber-50/80 text-amber-950 font-medium whitespace-nowrap active:scale-95 transition"
+                    >
+                      🥛 {lang === 'marathi' ? 'दूधवाले दादा' : 'Milkman'}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
 
           <div>
             <label className="block text-xs font-medium text-gray-500 mb-1">

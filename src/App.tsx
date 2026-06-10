@@ -29,11 +29,46 @@ export default function App() {
   const [isAddTxnOpen, setIsAddTxnOpen] = useState(false);
   const [addTxnType, setAddTxnType] = useState<'give' | 'get'>('give');
 
-  // Load from local storage
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [showInstallBtn, setShowInstallBtn] = useState(false);
+
+  // Load from local storage & listen to PWA install prompts
   useEffect(() => {
     setPeople(getStoredPeople());
     setLanguage(getStoredLanguage());
+
+    const handleBeforeInstall = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallBtn(true);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+
+    window.addEventListener('appinstalled', () => {
+      setDeferredPrompt(null);
+      setShowInstallBtn(false);
+      console.log('Udhar Book App installed');
+    });
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+    };
   }, []);
+
+  const handleInstallApp = async () => {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    try {
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        setDeferredPrompt(null);
+        setShowInstallBtn(false);
+      }
+    } catch (err) {
+      console.warn('PWA installment prompt error:', err);
+    }
+  };
 
   // Update localStorage when people changes
   const savePeopleData = (updatedPeople: Person[]) => {
@@ -176,6 +211,8 @@ export default function App() {
                 }}
                 onAddPersonClick={() => setIsAddPersonOpen(true)}
                 onOpenSettings={() => setCurrentView('settings')}
+                showInstallBtn={showInstallBtn}
+                onInstallClick={handleInstallApp}
               />
             </motion.div>
           )}
@@ -219,6 +256,8 @@ export default function App() {
                 onRestore={handleRestoreData}
                 onExport={handleExportData}
                 onBack={() => setCurrentView('dashboard')}
+                showInstallBtn={showInstallBtn}
+                onInstallClick={handleInstallApp}
               />
             </motion.div>
           )}

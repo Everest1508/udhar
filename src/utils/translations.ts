@@ -251,6 +251,31 @@ export const TRANSLATIONS = {
     { label: 'Gas / गॅस 🔥', value: 'Gas / गॅस' },
     { label: 'Other / इतर 📝', value: 'Other' },
   ],
+  installAppBanner: {
+    bilingual: '📲 Install App / ॲप डाउनलोड करा 📲',
+    english: '📲 Install Udhar Book App',
+    marathi: '📲 ॲप स्क्रीनवर डाउनलोड करा',
+  },
+  installAppDesc: {
+    bilingual: 'Works 100% offline without internet / इंटरनेट नसतानाही हिशोब चालू राहील',
+    english: 'Save to screen for fast, offline access. Works without internet.',
+    marathi: 'मोबाईलमध्ये ॲप म्हणून जोडा. इंटरनेट नसला तरी चालेल!',
+  },
+  installBtn: {
+    bilingual: 'Download / डाउनलोड करा',
+    english: 'Download',
+    marathi: 'डाऊनलोड (Install)',
+  },
+  contactsGuideTitle: {
+    bilingual: 'Import Contacts 📞 संपर्क जोडा',
+    english: 'Mobile Contacts Sync 📞',
+    marathi: 'मोबाईलचे काँटॅक्ट कसे निवडावेत? 📞',
+  },
+  contactsGuideDesc: {
+    bilingual: 'For security, browsers block contact lists inside preview screens. To use this, open this app directly in Chrome or Safari on your phone! / सुरक्षिततेसाठी मोबाईल बुक ॲक्सेस थेट क्रोम किंवा सफारी ब्राउझरमध्ये उघडल्यावरच मिळतो.',
+    english: 'The Contact Picker API only works when run directly on a mobile device natively (Chrome/Safari) using your secure App Link, outside of any iframe preview.',
+    marathi: 'सुरक्षिततेसाठी संपर्क निवडण्याची डिजिटल परवानगी थेट मोबाईलमध्ये क्रोम किंवा सफारी ब्राउझर चालू केल्यावरच मिळते. तेथे हा पर्याय थेट चालू होईल.',
+  },
 };
 
 export function getTranslation(key: keyof typeof TRANSLATIONS, mode: LanguageMode): any {

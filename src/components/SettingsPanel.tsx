@@ -6,7 +6,7 @@
 import React, { useRef, useState } from 'react';
 import { getTranslation } from '../utils/translations';
 import { LanguageMode } from '../types';
-import { Download, Upload, Globe, Check, ShieldAlert, ArrowLeft } from 'lucide-react';
+import { Download, Upload, Globe, Check, ShieldAlert, ArrowLeft, Smartphone, Info } from 'lucide-react';
 
 interface SettingsPanelProps {
   currentLang: LanguageMode;
@@ -14,6 +14,8 @@ interface SettingsPanelProps {
   onRestore: (restoredData: any) => boolean;
   onBack: () => void;
   onExport: () => void;
+  showInstallBtn: boolean;
+  onInstallClick: () => void;
 }
 
 export default function SettingsPanel({
@@ -22,6 +24,8 @@ export default function SettingsPanel({
   onRestore,
   onBack,
   onExport,
+  showInstallBtn,
+  onInstallClick,
 }: SettingsPanelProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [successMsg, setSuccessMsg] = useState('');
@@ -204,6 +208,55 @@ export default function SettingsPanel({
             accept=".json"
             className="hidden"
           />
+        </div>
+
+        {/* PWA App Download Guide Card */}
+        <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-sm space-y-4">
+          <div className="flex items-center gap-2 border-b border-gray-50 pb-3">
+            <Smartphone size={20} className="text-indigo-600" />
+            <h2 className="font-semibold text-gray-800 text-base">
+              {currentLang === 'marathi' ? 'मोबाईलमध्ये डाउनलोड / PWA' : 'Download Mobile App'}
+            </h2>
+          </div>
+
+          <p className="text-xs text-gray-500 leading-relaxed font-normal">
+            {currentLang === 'marathi' 
+              ? 'हे ॲप तुमच्या मोबाईलवर डाउनलोड करा, जेणेकरून इंटरनेट नसतानाही हिशोब सुरळीत काम करेल.' 
+              : 'Add Udhar Book to your mobile home screen to access all ledgers completely offline.'}
+          </p>
+
+          {showInstallBtn ? (
+            <button
+              onClick={onInstallClick}
+              type="button"
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-indigo-600 py-3.5 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 transition"
+            >
+              <Smartphone size={16} />
+              <span>{getTranslation('installBtn', currentLang)}</span>
+            </button>
+          ) : (
+            <div className="rounded-xl bg-indigo-50/40 border border-indigo-100 p-4 space-y-3">
+              <p className="text-xs font-bold text-indigo-950 flex items-center gap-1.5">
+                <Info size={14} className="text-indigo-600 shrink-0" />
+                <span>{currentLang === 'marathi' ? 'ॲप स्क्रीनवर जोडण्यासाठी मार्गदर्शन:' : 'How to install on your phone:'}</span>
+              </p>
+              
+              <div className="space-y-2.5 text-[11px] text-indigo-900 leading-relaxed font-medium">
+                <div>
+                  <span className="font-extrabold text-indigo-950 block">📱 Android (Chrome / क्रोम):</span>
+                  {currentLang === 'marathi' 
+                    ? 'उजवीकडील तीन ठिपक्यांच्या मेन्यू (⋮) वर दाबा आणि "Add to Home screen" किंवा "Install app" निवडा.' 
+                    : 'Tap the three-dots menu (⋮) at top-right and select "Add to Home screen" or "Install App".'}
+                </div>
+                <div className="pt-1.5 border-t border-indigo-100/50">
+                  <span className="font-extrabold text-indigo-950 block">🍎 iPhone (Safari / सफारी):</span>
+                  {currentLang === 'marathi' 
+                    ? 'खालच्या बाजूला असलेल्या शेअर चिन्हावर (⎙ / ⎋) दाबा आणि नंतर "Add to Home Screen" निवडा.' 
+                    : 'Tap the Share button (⎙ / ⎋) and scroll down to select "Add to Home Screen".'}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Safe Usage Disclaimer */}

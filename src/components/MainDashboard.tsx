@@ -7,7 +7,7 @@ import React, { useState } from 'react';
 import { Person, LanguageMode } from '../types';
 import { getTranslation } from '../utils/translations';
 import { calculatePersonBalance } from '../utils/localStorage';
-import { Search, UserPlus, SlidersHorizontal, Settings, BookOpen, Plus, ArrowUpRight, ArrowDownLeft, Smile } from 'lucide-react';
+import { Search, UserPlus, SlidersHorizontal, Settings, BookOpen, Plus, ArrowUpRight, ArrowDownLeft, Smile, X, Download } from 'lucide-react';
 
 interface MainDashboardProps {
   people: Person[];
@@ -15,6 +15,8 @@ interface MainDashboardProps {
   onSelectPerson: (id: string) => void;
   onAddPersonClick: () => void;
   onOpenSettings: () => void;
+  showInstallBtn: boolean;
+  onInstallClick: () => void;
 }
 
 const AVATAR_COLORS = [
@@ -48,9 +50,12 @@ export default function MainDashboard({
   onSelectPerson,
   onAddPersonClick,
   onOpenSettings,
+  showInstallBtn,
+  onInstallClick,
 }: MainDashboardProps) {
   const [search, setSearch] = useState('');
   const [activeFilter, setActiveFilter] = useState<'all' | 'get' | 'give' | 'settled'>('all');
+  const [showInstallBanner, setShowInstallBanner] = useState(true);
 
   // Math summary calculation
   let totalGet = 0; // Money others owe mother (person balance > 0)
@@ -109,6 +114,45 @@ export default function MainDashboard({
           </button>
         </div>
       </div>
+
+      {showInstallBanner && showInstallBtn && (
+        <div className="mx-4 mt-4 rounded-2xl bg-gradient-to-r from-indigo-600 to-indigo-700 text-white p-4 relative overflow-hidden flex flex-col gap-2 shadow-md">
+          {/* Subtle background circle decoration */}
+          <div className="absolute -right-6 -bottom-6 w-24 h-24 rounded-full bg-white/10" />
+          <div className="absolute right-12 -top-10 w-20 h-20 rounded-full bg-white/5" />
+          
+          <button 
+            onClick={() => setShowInstallBanner(false)}
+            className="absolute top-2.5 right-2.5 text-white/70 hover:text-white p-1 rounded-full hover:bg-white/10 transition"
+            type="button"
+          >
+            <X size={15} />
+          </button>
+          
+          <div className="flex items-start gap-2.5 pr-6">
+            <span className="text-xl">📲</span>
+            <div>
+              <h4 className="text-xs font-bold uppercase tracking-wider text-indigo-100">
+                {lang === 'marathi' ? 'मोबाईलमध्ये ॲप मिळवा' : 'Get Mobile App'}
+              </h4>
+              <p className="text-[11px] font-medium leading-relaxed mt-0.5 text-indigo-50">
+                {getTranslation('installAppDesc', lang)}
+              </p>
+            </div>
+          </div>
+          
+          <div className="flex justify-start pt-1">
+            <button
+              onClick={onInstallClick}
+              type="button"
+              className="bg-white text-indigo-700 hover:bg-indigo-55 text-xs font-bold px-4 py-2 rounded-xl shadow-md transition-all active:scale-95 flex items-center gap-1.5"
+            >
+              <Download size={13} />
+              <span>{getTranslation('installBtn', lang)}</span>
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Main Container */}
       <div className="p-4 space-y-4">
